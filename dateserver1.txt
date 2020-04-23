@@ -1,0 +1,61 @@
+/*A Simple server in the internet omain using TCP*/
+#include<stdio.h>
+#include<sys/types.h>
+#include<sys/socket.h>
+#include<netinet/in.h>
+#include<time.h>
+
+void error(char *msg)
+{
+ perror(msg);
+ exit(1);
+}
+int main()
+{
+  int sockfd,newsockfd,portno,clilen;
+  char str[256];
+  struct sockaddr_in sa,cli;
+  int conn,len,ch;
+  time_t tick;
+/*  if(argc<2)
+  {
+   fprintf(stderr,"ERROR,no port provided\n");
+   exit(1);
+  }*/
+ sockfd=socket(AF_INET,SOCK_STREAM,0);
+ if(sockfd<0)
+ {
+  error("Error opening socket");
+ }
+ bzero((char *) &sa,sizeof(sa));
+
+ sa.sin_family=AF_INET;
+ sa.sin_addr.s_addr=htonl(0);
+ sa.sin_port=htons(5600);
+
+ if(bind(sockfd,(struct sockaddr *) &sa,sizeof(sa))<0)
+ {
+  error("Error on Binding");
+   }
+ listen(sockfd,60);
+ for(;;)
+{
+ clilen=sizeof(ch);
+ newsockfd=accept(sockfd,(struct sockaddr *) &cli,&clilen);
+ if(newsockfd<0)
+ {
+  error("Error on Accept");
+}
+// bzero(buffer,256);
+ tick=time(NULL);
+/* if(n<0)
+ {
+  error("Error reading from socket");
+ }*/
+snprintf(str,sizeof(str)," %s\n",ctime(&tick));
+ printf("%s",str);
+write(newsockfd,str,100);
+ return 0;
+}
+}
+
